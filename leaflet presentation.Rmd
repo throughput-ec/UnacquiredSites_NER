@@ -1,0 +1,76 @@
+---
+title: "Untitled"
+author: "Socorro Dominguez"
+date: "11/10/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+library(tidyverse)
+library(sf)
+library(purrr)
+library(dplyr)
+library(arulesViz)
+library(leaflet)
+library(mapview)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r}
+df <- read_csv("new_trial.csv")
+class(df)
+```
+
+```{r pressure, echo=FALSE}
+df 
+
+df
+```
+`
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+```{r}
+library(sf)
+
+lat <- c(45.25416667, -50.41666667, -52, -20, 44.66805556, -20, 46.01388889, -50, 4, 45.25555556, -42.5, -42.5, 45.51388889, 48, 50.1975, -16.17, 45.65138889, 18)
+lon <- c(-66.66944444,-72,-69,-68,-62.06111111,-68,-65.37222222,-72,-63,-66.66944444,-71,-71,-61.48194444,-80,15,-68.57,-69.5,-84)
+place <- c("1", "2", "3", "4", "5", "6", "7" , "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18")
+
+```
+
+```{r}
+df <- data.frame(lon, lat, place, stringsAsFactors = FALSE)
+points <- st_as_sf(df, coords = c(lon, lat), crs = 4326)
+```
+
+```{r}
+
+leaflet(df) %>% addTiles() %>% addMarkers(popup = ~ place)
+```
+
+
+```{r}
+map1 <- leaflet(df) %>% 
+  addProviderTiles(providers$Stamen.TerrainBackground) %>% 
+  addTiles() %>%
+  addCircleMarkers(lng = -df$LONG2	, lat = df$LAT2,
+                   popup = paste0('<b>', df$sentence),
+                                     clusterOptions = markerClusterOptions(),
+                                     options = markerOptions(riseOnHover = TRUE))
+
+map1
+```
